@@ -1,0 +1,34 @@
+.studio-shell { min-height: 620px; grid-template-rows: 58px minmax(280px, 1fr) clamp(240px, 42vh, 394px); }
+.studio-main { overflow-x: auto; }
+.studio-side { position: relative; min-width: 0; min-height: 0; background: #121318; overflow: hidden; }
+.studio-side-left { border-right: 1px solid var(--border); }.studio-side-right { border-left: 1px solid var(--border); }
+.studio-side-content, .storyboard-content { height: 100%; min-height: 0; }
+.studio-side-content[hidden], .storyboard-content[hidden], .producer-chat[hidden], .producer-animation[hidden] { display: none; }
+.studio-side .producer-panel { display: flex; flex-direction: column; height: 100%; border: 0; }
+.studio-side .storyboard, .studio-side .clip-inspector { display: grid; height: 100%; border: 0; }
+.studio-side .panel-header { padding-right: 42px; }
+.studio-side .clip-inspector .panel-header > button { margin-right: 24px; }
+.panel-chevron { position: absolute; z-index: 30; right: 7px; top: 15px; width: 26px; height: 30px; border: 1px solid #ffffff15; border-radius: 6px; background: #20222a; color: #aaa; cursor: pointer; display: grid; place-items: center; padding: 0; }
+.panel-chevron:hover { color: white; background: #30323d; }.panel-chevron:focus-visible, .collapsed-panel-label:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.studio-side.is-collapsed .panel-chevron { right: 5px; width: 26px; }
+.collapsed-panel-label { position: absolute; top: 62px; left: 0; width: 36px; border: 0; padding: 16px 8px; background: none; color: #8f94a0; writing-mode: vertical-rl; font-size: 11px; letter-spacing: .06em; cursor: pointer; }
+.producer-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 7px 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.producer-tabs button { display: flex; justify-content: center; align-items: center; gap: 6px; padding: 8px 3px; border: 0; border-radius: 6px; background: transparent; color: #8c919e; font-size: 11px; cursor: pointer; }
+.producer-tabs button[aria-selected=true] { background: #ff594515; color: #ff9c84; }
+.producer-chat { display: flex; flex-direction: column; flex: 1; min-height: 0; }.producer-chat .chat-scroll { flex: 1; }.producer-chat .composer { flex-shrink: 0; }
+.producer-animation { min-height: 0; flex: 1; overflow: auto; scrollbar-width: thin; }
+.motion-panel { padding: 16px 12px; }.motion-intro { margin-bottom: 14px; }.motion-intro > svg { color: #ff9c84; }.motion-intro h3 { font-size: 17px; margin: 7px 0; letter-spacing: -.04em; }.motion-intro p { color: #8f94a0; font-size: 11px; line-height: 1.6; }
+.motion-panel form { display: grid; gap: 12px; }.motion-panel label { font-size: 10px; }.motion-panel textarea, .motion-panel select { font-size: 11px; }.motion-options { display: grid; grid-template-columns: 1fr 1.4fr; gap: 9px; }
+.motion-note { font-size: 9px; line-height: 1.6; color: #7e8491; }.motion-examples { display: grid; gap: 7px; margin-top: 17px; }.motion-examples span { font-size: 10px; color: #8f94a0; }.motion-examples button { text-align: left; background: #1b1d25; color: #b4bbc8; border: 1px solid #2f323e; padding: 10px; border-radius: 6px; font-size: 10px; cursor: pointer; }
+.motion-library h4 { font-size: 12px; display: flex; justify-content: space-between; margin-top: 23px; }.motion-library h4 span { color: #777e8e; }
+.motion-card { margin-bottom: 14px; border: 1px solid #303441; background: #171920; border-radius: 8px; overflow: hidden; }.motion-card.selected { border-color: #936bca; }
+.motion-drag-handle { display: flex; align-items: center; gap: 5px; padding: 10px 8px; cursor: grab; }.motion-drag-handle:active { cursor: grabbing; }.motion-drag-handle strong { min-width: 0; font-size: 11px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }.motion-drag-handle span { margin-left: auto; font-size: 9px; color: #868d9c; }
+.motion-preview, .motion-preview-placeholder { width: 100%; aspect-ratio: 16/9; display: grid; place-items: center; background: #0c0e15; }.motion-preview-placeholder { border: 0; font-size: 18px; font-weight: 700; padding: 15px; cursor: pointer; }.motion-preview-placeholder small { font-size: 9px; font-weight: 400; color: #b5bfd0; }
+.motion-card-footer { display: flex; align-items: center; justify-content: space-between; gap: 4px; padding: 6px 8px; }.motion-card-footer > span { font-size: 8px; color: #969daf; }.motion-card-footer .button { min-height: 26px; padding-inline: 4px; font-size: 9px; }
+.motion-controls { display: grid; gap: 10px; }.motion-controls input[type=color] { height: 30px; padding: 2px; }.motion-controls .compact-check { display: flex; flex-direction: row; align-items: center; gap: 7px; }.motion-controls .compact-check input { width: auto; }.motion-controls small { color: #868d9c; font-size: 10px; }.motion-item-edit { display: grid; gap: 7px; }
+.studio-side .unified-storyboard { grid-template-rows: auto minmax(0, 1fr) auto; }
+.script-board-body { min-height: 0; overflow: auto; padding: 12px; scrollbar-width: thin; display: flex; flex-direction: column; gap: 12px; }.script-board-note { font-size: 11px; color: #8c94a2; line-height: 1.65; margin: 0; }.full-script-label { display: flex; flex-direction: column; flex: 1; min-height: 150px; }.full-script-label textarea { flex: 1; min-height: 180px; font-size: 12px; line-height: 1.75; resize: vertical; }.script-board-stats { display: flex; justify-content: space-between; color: #777f91; font-size: 9px; }.script-board-body .field-grid { gap: 8px; }.script-board-body label { font-size: 10px; }.script-board-body input, .script-board-body select { font-size: 11px; }.script-board-actions { display: flex; gap: 8px; padding: 10px 12px; border-top: 1px solid var(--border); }.script-board-actions .button { flex: 1; font-size: 10px; }.script-saved { color: #78c6a2; font-size: 10px; display: flex; gap: 5px; margin: 0; }
+.track-lane.motion-drop-target { outline: 2px dashed #ab8ddd; outline-offset: -3px; background: #ad84dd10; }
+.motion-drag-overlay { padding: 12px 16px; background: #292032; color: #fff; border: 1px solid #b18edb; border-radius: 7px; font-size: 12px; box-shadow: 0 8px 24px #0008; cursor: grabbing; }
+.motion-drag-handle { user-select: none; }.motion-drag-handle:focus-visible { outline: 2px solid #b18edb; outline-offset: -2px; }
+.motion-studio-error { position: fixed; z-index: 100; bottom: 16px; right: 16px; max-width: 430px; padding: 14px; border-radius: 8px; background: #512e2c; color: #ffd1c8; font-size: 12px; }.motion-studio-error button { margin-left: 12px; border: 0; background: transparent; color: inherit; cursor: pointer; }

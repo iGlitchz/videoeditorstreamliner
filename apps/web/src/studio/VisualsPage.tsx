@@ -1,0 +1,30 @@
+import { useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Check, Plus, Search, Trash2, X } from 'lucide-react';
+import type { Project, StockVisual } from '@studio/shared';
+import { api } from '../lib/api';
+import { recordingApi } from '../recording/api';
+import { MotionPanel } from './MotionPanel';
+
+export function VisualsPage({ project }: { project: Project }) {
+  return <div className="visuals-page"><div className="page-heading"><div><span className="panel-kicker">Visuals</span><h2>Make it move. Find the right shot.</h2><p>Preview, choose, and organize visuals before they reach your timeline.</p></div></div><div className="visuals-columns"><section className="panel animation-workspace"><MotionPanel project={project} /></section><StockPanel project={project} /></div></div>;
+}
+function StockPanel({ project }: { project: Project }) {
+  const client = useQueryClient(); const [provider, setProvider] = useState<'pexels' | 'pixabay'>('pexels'); const [type, setType] = useState<'image' | 'video'>('video');
+  const [query, setQuery] = useState(''); const [results, setResults] = useState<StockVisual[]>([]); const [dismissed, setDismissed] = useState<string[]>([]); const [page, setPage] = useState(1); const [searching, setSearching] = useState(false); const [error, setError] = useState(''); const [adding, setAdding] = useState<string[]>([]);
+  const [lastSearch, setLastSearch] = useState<{ provider: 'pexels' | 'pixabay'; type: 'image' | 'video'; query: string } | null>(null);
+  const assets = useQuery({ queryKey: ['assets', project.id], queryFn: () => recordingApi.assets(project.id) });
+  const search = async (more = false) => { const context = more ? lastSearch! : { provider, type, query: query.trim() }; if (!context?.query || searching) return; setSearching(true); setError(''); try { const nextPage = more ? page + 1 : 1; const rows = await api.stockSearch(project.id, context.provider, context.type, context.query, nextPage); setResults(current => more ? [...current, ...rows.filter(r => !current.some(c => c.id === r.id))] : rows); setPage(nextPage); setLastSearch(context); if (!more) setDismissed([]); } catch (e) { setError((e as Error).message); } finally { setSearching(false); } };
+  const choose = async (result: StockVisual) => { setAdding(ids => [...ids, result.id]); setError(''); try { await api.stockImport(project.id, result.id); await client.invalidateQueries({ queryKey: ['assets', project.id] }); } catch (e) { setError((e as Error).message); } finally { setAdding(ids => ids.filter(id => id !== result.id)); } };
+  const selected = (assets.data ?? []).filter(a => a.selected !== false && !a.deleted && a.credit);
+  const remove = async (id: string) => { try { await api.deleteAsset(project.id, id); await client.invalidateQueries({ queryKey: ['assets', project.id] }); } catch (e) { setError((e as Error).message); } };
+  return <section className="panel stock-panel"><div className="panel-header"><div><span className="panel-kicker">Stock library</span><strong>Photos & footage</strong></div><div className="provider-links"><a href="https://www.pexels.com" target="_blank" rel="noreferrer">Pexels</a><a href="https://pixabay.com" target="_blank" rel="noreferrer">Pixabay</a></div></div>
+    <form className="stock-search" onSubmit={e => { e.preventDefault(); void search(); }}><div className="field-grid"><label>Provider<select value={provider} onChange={e => setProvider(e.target.value as typeof provider)}><option value="pexels">Pexels</option><option value="pixabay">Pixabay</option></select></label><label>Media<select value={type} onChange={e => setType(e.target.value as typeof type)}><option value="video">Video</option><option value="image">Photos</option></select></label></div><div className="stock-query"><input aria-label="Search stock visuals" value={query} maxLength={100} onChange={e => setQuery(e.target.value)} placeholder="Ocean, workspace, city at night…" /><button className="button button-primary" disabled={searching || !query.trim()}><Search size={15} />{searching ? 'Searching…' : 'Search'}</button></div></form>
+    {error && <p role="alert" className="capture-error">{error}</p>}
+    <div className="stock-scroll"><div className="stock-grid">{results.filter(r => !dismissed.includes(r.id)).map(r => { const chosen = selected.some(a => a.sourceProvider === r.id); return <article className="stock-card" key={r.id}><a href={r.credit.sourceUrl} target="_blank" rel="noreferrer" aria-label={`Preview source: ${r.name}`}><img src={r.previewUrl} alt={r.name} loading="lazy" /><span>{r.type === 'video' ? `${r.duration}s` : 'Photo'}</span></a><button className="stock-dismiss" aria-label={`Dismiss ${r.name}`} onClick={() => setDismissed(ids => [...ids, r.id])}><X size={13} /></button><div><a className="stock-credit" href={r.credit.creatorUrl} target="_blank" rel="noreferrer">{r.credit.creator} · {r.credit.provider}</a><button className="button button-ghost" disabled={chosen || adding.includes(r.id)} onClick={() => choose(r)}>{chosen ? <Check size={13} /> : <Plus size={13} />}{chosen ? 'In gallery' : adding.includes(r.id) ? 'Importing…' : 'Choose'}</button></div></article>; })}</div>
+      {results.length > 0 && <button className="button button-default full-width" disabled={searching} onClick={() => search(true)}>Search more {lastSearch?.provider} results</button>}
+      {!results.length && <div className="workspace-empty">Search both libraries for footage or photos. Chosen files are saved locally in your project, with their source credits.</div>}
+      {selected.length > 0 && <><h3 className="chosen-visuals-heading">Chosen stock visuals</h3>{selected.map(a => <div className="chosen-stock" key={a.id}><strong>{a.name}</strong><a href={a.credit!.sourceUrl} target="_blank" rel="noreferrer">{a.credit!.creator} · {a.credit!.provider}</a><button className="button button-ghost icon-button" aria-label={`Delete visual: ${a.name}`} title="Delete from library; timeline instances and original files remain" onClick={() => remove(a.id)}><Trash2 size={14} /></button></div>)}</>}
+    </div>
+  </section>;
+}

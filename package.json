@@ -1,0 +1,20 @@
+{
+  "name": "youtube-studio",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "predev": "npm run build -w @studio/shared",
+    "dev": "concurrently -n server,web -c yellow,cyan \"npm run dev -w @studio/server\" \"npm run dev -w @studio/web\"",
+    "build": "npm run build -w @studio/shared && npm run build -w @studio/video && npm run build -w @studio/server && npm run build -w @studio/web",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "db:push": "npm run db:push -w @studio/server",
+    "start": "npm run start -w @studio/server"
+  },
+  "devDependencies": {
+    "concurrently": "9.2.1",
+    "typescript": "5.9.2"
+  },
+  "engines": { "node": ">=22" }
+}
